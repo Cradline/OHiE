@@ -21,7 +21,7 @@ l4 = ik.l4
 ik.setLinkLength(L1=l1+1.3, L4=l4)
 
 class ArmIK:
-    servo3Range = (500, 2500.0, 0, 180.0) #脉宽， 角度
+    servo3Range = (500, 2500.0, 0, 180.0) # Pulsbredde，Vinkel
     servo4Range = (500, 2500.0, 0, 180.0)
     servo5Range = (500, 2500.0, 0, 180.0)
     servo6Range = (500, 2500.0, 0, 180.0)
