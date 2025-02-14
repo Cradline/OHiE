@@ -419,6 +419,7 @@ class Board:
         self.buf_write(PacketFunction.PACKET_FUNC_BUS_SERVO, data)
 
     def bus_servo_set_position(self, duration, positions):
+        # styrer PWM-servoene til spesifikke posisjoner
         duration = int(duration * 1000)
         data = [0x01, duration & 0xFF, 0xFF & (duration >> 8), len(positions)] # 0x00 is bus servo sub command
         for i in positions:

@@ -24,6 +24,7 @@ def leMap(x, in_min, in_max, out_min, out_max):
 #将图形的像素坐标转换为机械臂的坐标系
 #传入坐标及图像分辨率，例如(100, 100, (640, 320))
 def convertCoordinate(x, y, size):
+    # konverterer pikselkoordinater til robotarmens koordinatsystem
     x = leMap(x, 0, size[0], 0, 640)
     x = x - 320
     x_ = round(x * map_param_, 2)
@@ -114,6 +115,7 @@ def getCenter(rect, roi, size, square_length):
 # 获取旋转的角度
 # 参数：机械臂末端坐标, 木块旋转角
 def getAngle(x, y, angle):
+    # beregner vinkler for en gitt posisjon
     theta6 = round(math.degrees(math.atan2(abs(x), abs(y))), 1)
     angle = abs(angle)
     

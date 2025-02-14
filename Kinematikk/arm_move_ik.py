@@ -41,7 +41,7 @@ class ArmIK:
         self.servo6Param = (self.servo6Range[1] - self.servo6Range[0]) / (self.servo6Range[3] - self.servo6Range[2])
 
     def transformAngelAdaptArm(self, theta3, theta4, theta5, theta6):
-        #将逆运动学算出的角度转换为舵机对应的脉宽值
+        #将逆运动学算出的角度转换为舵机对应的脉宽值 konverterer vinkler til servopulsbredder
         servo3 = int(round(theta3 * self.servo3Param + (self.servo3Range[1] + self.servo3Range[0])/2))
         if servo3 > self.servo3Range[1] or servo3 < self.servo3Range[0]:
             logger.info('servo3(%s)超出范围(%s, %s)', servo3, self.servo3Range[0], self.servo3Range[1])
@@ -67,7 +67,7 @@ class ArmIK:
         return {"servo3": servo3, "servo4": servo4, "servo5": servo5, "servo6": servo6}
 
     def servosMove(self, servos, movetime=None):
-        #驱动3,4,5,6号舵机转动
+        #驱动3,4,5,6号舵机转动 styrer servoene til de beregnede posisjonene
         if movetime is None:
             max_d = 0
             for i in  range(0, 4):
@@ -85,6 +85,7 @@ class ArmIK:
         return movetime
 
     def setPitchRange(self, coordinate_data, alpha1, alpha2, da = 1):
+        # Flytter robotarmen til en posisjon med en gitt pitch-vinkel
         #给定坐标coordinate_data和俯仰角的范围alpha1，alpha2, 自动在范围内寻找到的合适的解
         #如果无解返回False,否则返回对应舵机角度,俯仰角
         #坐标单位cm， 以元组形式传入，例如(0, 5, 10)
@@ -109,12 +110,15 @@ class ArmIK:
 
 
     def setPitchRangeMoving(self, coordinate_data, alpha, alpha1, alpha2, movetime = None):
-        #给定坐标coordinate_data和俯仰角alpha,以及俯仰角范围的范围alpha1, alpha2，自动寻找最接近给定俯仰角的解，并转到目标位置
-        #如果无解返回False,否则返回舵机角度、俯仰角、运行时间
-        #坐标单位cm， 以元组形式传入，例如(0, 5, 10)
-        #alpha为给定俯仰角
-        #alpha1和alpha2为俯仰角的取值范围
-        #movetime为舵机转动时间，单位ms, 如果不给出时间，则自动计算
+
+# Gitt koordinater coordinate_data og pitch-vinkel alpha, samt pitch-vinkelområdet alpha1 og alpha2,
+# automatisk finn den løsningen som er nærmest den gitte pitch-vinkelen og flytt til målposisjonen.
+# Hvis det ikke finnes noen løsning, returner False. Ellers returner servo-vinkler, pitch-vinkel og kjøretid.
+# Koordinatene er i centimeter og sendes som en tuppel, for eksempel (0, 5, 10).
+# alpha er den gitte pitch-vinkelen.
+# alpha1 og alpha2 er området for pitch-vinkelen.
+# movetime er tiden det tar for servoen å bevege seg, i millisekunder. Hvis tiden ikke er oppgitt, beregnes den automatisk.
+        
         x, y, z = coordinate_data
         result1 = self.setPitchRange((x, y, z), alpha, alpha1)
         result2 = self.setPitchRange((x, y, z), alpha, alpha2)
