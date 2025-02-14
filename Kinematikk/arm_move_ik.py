@@ -102,6 +102,12 @@ class ArmIK:
 
         return False
 
+# coordinate_data = x, y, z koordinater i verdensrammen [cm] fra senter/bunn av robotarm
+# alpha = vinkel til bunn servo (rundt z akse)
+# alpha 1, alpha 2 = [0,180] grader, mulig rotasjon for bunnservo
+# movetime = tid i [ms] for å utfør bevegelsen
+
+
     def setPitchRangeMoving(self, coordinate_data, alpha, alpha1, alpha2, movetime = None):
         #给定坐标coordinate_data和俯仰角alpha,以及俯仰角范围的范围alpha1, alpha2，自动寻找最接近给定俯仰角的解，并转到目标位置
         #如果无解返回False,否则返回舵机角度、俯仰角、运行时间
