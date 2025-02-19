@@ -61,11 +61,11 @@ class IK:
         if self.arm_type == 'pump':
             Alpha -= self.alpha
         #求底座旋转角度
-        theta6 = degrees(atan2(Y, X))
+        theta6 = degrees(atan2(Y, X))           # den vi tegne ovenfra som theta_1, base-servo: rotasjon rundt Z_0
  
-        P_O = sqrt(X*X + Y*Y) #P_到原点O距离
+        P_O = sqrt(X*X + Y*Y)                   # distanse fra origo til ende-effektor
         CD = self.l4 * cos(radians(Alpha))
-        PD = self.l4 * sin(radians(Alpha)) #当俯仰角为正时，PD为正，当俯仰角为负时，PD为负
+        PD = self.l4 * sin(radians(Alpha))      # When the pitch angle is positive, PD is positive, and when the pitch angle is negative, PD is negative.
         AF = P_O - CD
         CF = Z - self.l1 - PD
         AC = sqrt(pow(AF, 2) + pow(CF, 2))
@@ -73,22 +73,22 @@ class IK:
             logger.debug('高度低于0, CF(%s)<l1(%s)', CF, -self.l1)
             return False
         if self.l2 + self.l3 < round(AC, 4): #两边之和小于第三边
-            logger.debug('不能构成连杆结构, l2(%s) + l3(%s) < AC(%s)', self.l2, self.l3, AC)
+            logger.debug('Cannot establish linkage mechanism, l2(%s) + l3(%s) < AC(%s)', self.l2, self.l3, AC)
             return False
 
         #求theat4
-        cos_ABC = round((pow(self.l2, 2) + pow(self.l3, 2) - pow(AC, 2))/(2*self.l2*self.l3), 4) #余弦定理
+        cos_ABC = round((pow(self.l2, 2) + pow(self.l3, 2) - pow(AC, 2))/(2*self.l2*self.l3), 4) # Law of cosines
         if abs(cos_ABC) > 1:
-            logger.debug('不能构成连杆结构, abs(cos_ABC(%s)) > 1', cos_ABC)
+            logger.debug('Cannot establish linkage mechanism, abs(cos_ABC(%s)) > 1', cos_ABC)
             return False
         ABC = acos(cos_ABC) #反三角算出弧度
         theta4 = 180.0 - degrees(ABC)
 
         #求theta5
         CAF = acos(AF / AC)
-        cos_BAC = round((pow(AC, 2) + pow(self.l2, 2) - pow(self.l3, 2))/(2*self.l2*AC), 4) #余弦定理
+        cos_BAC = round((pow(AC, 2) + pow(self.l2, 2) - pow(self.l3, 2))/(2*self.l2*AC), 4) # Law of cosines
         if abs(cos_BAC) > 1:
-            logger.debug('不能构成连杆结构, abs(cos_BAC(%s)) > 1', cos_BAC)
+            logger.debug('Cannot establish linkage mechanism, abs(cos_BAC(%s)) > 1', cos_BAC)
             return False
         if CF < 0:
             zf_flag = -1
