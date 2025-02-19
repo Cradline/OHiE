@@ -53,7 +53,7 @@ class IK:
         # coordinate_data is the coordinates of the end effector, in centimeters (cm), passed as a tuple, e.g., (0, 5, 10).
         # Alpha is the angle between the end effector and the horizontal plane, in degrees.
 
-        # Point P(X,Y,Z) is the end effector. O is the Origin projected on the ground. P is the projection of point P(X,Y,Z) on the ground.
+        # Point P(X,Y,Z) is the end effector (P_E). O is the Origin projected on the ground. P is the projection of point P(X,Y,Z) on the ground.
         # Point A is the intersection between l1 and l2. Point B is the intersection between l2 and l3. Point C is the intersection between l3 and l4.
         # CD = vinkelrett på PD og Z-aksen. Pitch angle Alpha er vinkel mellom CD og PC. 
         # Vinkler er representert på følgende måte: Vinkel mellom AB og BC er ABC
@@ -67,8 +67,8 @@ class IK:
         P_O = sqrt(X*X + Y*Y)                   # distanse fra Origo til ende-effektor
         CD = self.l4 * cos(radians(Alpha))      # Lengde (X) fra ledd-C til ende-effektor (hjelpe-punkt D)
         PD = self.l4 * sin(radians(Alpha))      # Høyde (Z) fra ledd-C til ende-effektor (hjelpe-punkt D). Alpha pos -> PD = pos, Alpha neg -> PD = neg.
-        AF = P_O - CD                           # distanse fra Origo til D ?
-        CF = Z - self.l1 - PD                   # Høyde fra Origo til 
+        AF = P_O - CD                           # distanse fra Origo (eller A) til hjelpe-punkt F, langs X i XZ.  
+        CF = Z - self.l1 - PD                   # Høyde (Z) mellom C og hjelpe-punkt F
         AC = sqrt(pow(AF, 2) + pow(CF, 2))
         if round(CF, 4) < -self.l1:
             logger.debug('高度低于0, CF(%s)<l1(%s)', CF, -self.l1)
