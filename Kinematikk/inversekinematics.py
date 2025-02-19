@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 # encoding: utf-8
-# 4自由度机械臂逆运动学：给定相应的坐标（X,Y,Z），以及俯仰角，计算出每个关节转动的角度
-# 2020/07/20 Aiden
+# Inverse kinematics of a 4-DOF robot: Given the corresponding coordinates (X, Y, Z) and pitch angle,
+# calculates the rotation angle of each joint.
+
+
 import logging
 from math import *
 
@@ -15,7 +17,7 @@ class IK:
     l1 = 8.00       #Distance from the center of the robotic arm base to the axis of the second servo: 6.10 cm.
     l2 = 6.50       #Distance from the second servo to the third servo: 10.16 cm.
     l3 = 6.20       #Distance from the third servo to the fourth servo: 9.64 cm.
-    l4 = 0.00       #这里不做具体赋值，根据初始化时的选择进行重新赋值
+    l4 = 0.00       #Placeholder
 
     # Parameters specific to the pneumatic pump version.
     l5 = 4.70  #Distance from the fourth servo to directly above the suction nozzle: 4.70 cm.
@@ -24,10 +26,10 @@ class IK:
 
     def __init__(self, arm_type): # Revolusjons eller prismatisk ende-effektor
         self.arm_type = arm_type
-        if self.arm_type == 'pump': #如果是气泵款机械臂
-            self.l4 = sqrt(pow(self.l5, 2) + pow(self.l6, 2))  #第四个舵机到吸嘴作为第四个连杆
+        if self.arm_type == 'pump': # Trolig unødvendig
+            self.l4 = sqrt(pow(self.l5, 2) + pow(self.l6, 2))  # unødvendig
         elif self.arm_type == 'arm':
-            self.l4 = 10.00  #第四个舵机到机械臂末端的距离16.6cm， 机械臂末端是指爪子完全闭合时
+            self.l4 = 10.00  #The distance from the fourth servo to the end of the robotic arm is 16.6cm? Claw closed.
 
     def setLinkLength(self, L1=l1, L2=l2, L3=l3, L4=l4, L5=l5, L6=l6):
         # Change the link lengths of the robotic arm to adapt to arms of the same structure but different lengths.
@@ -79,7 +81,7 @@ class IK:
             logger.debug('Cannot establish linkage mechanism, l2(%s) + l3(%s) < AC(%s)', self.l2, self.l3, AC)
             return False
 
-        # Theta_4
+        # Theta_4. phi_B = vinkel ABC, mellom AB og BC
         cos_phi_B = round((pow(self.l2, 2) + pow(self.l3, 2) - pow(AC, 2))/(2*self.l2*self.l3), 4) # Law of cosines
         if abs(phi_B) > 1:
             logger.debug('Cannot establish linkage mechanism, abs(cos_phi_B(%s)) > 1', cos_phi_B)
@@ -104,10 +106,10 @@ class IK:
         if self.arm_type == 'pump':
             theta3 += self.alpha
 
-        return {"theta3":theta3, "theta4":theta4, "theta5":theta5, "theta6":theta6} # 有解时返回角度字典
+        return {"theta3":theta3, "theta4":theta4, "theta5":theta5, "theta6":theta6} # Returns the angles if there is a solution
             
 if __name__ == '__main__':
     ik = IK('arm')
     #ik.setLinkLength(L1=ik.l1 + 1.30, L4=ik.l4)
-    print('连杆长度：', ik.getLinkLength())
+    print('Link length：', ik.getLinkLength())
     #print(ik.getRotationAngle((0, ik.l4, ik.l1 + ik.l2 + ik.l3), 0))
