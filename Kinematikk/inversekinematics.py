@@ -15,6 +15,7 @@ class IK:
     # Servos are counted from bottom to top.
     # Link parameters of the 4-DOF robotic arm.
     l1 = 8.00       #Distance from the center of the robotic arm base to the axis of the second servo: 6.10 cm.
+                    #Might have to pad l1 to account for wheels and chassis
     l2 = 6.50       #Distance from the second servo to the third servo: 10.16 cm.
     l3 = 6.20       #Distance from the third servo to the fourth servo: 9.64 cm.
     l4 = 10.00      #Placeholder: 10cm Servo 4 til klo tip
