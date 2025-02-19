@@ -69,11 +69,11 @@ class IK:
         PD = self.l4 * sin(radians(Alpha))      # Høyde (Z) fra ledd-C til ende-effektor (hjelpe-punkt D). Alpha pos -> PD = pos, Alpha neg -> PD = neg.
         AF = P_O - CD                           # distanse fra Origo (eller A) til hjelpe-punkt F, langs X i XZ.  
         CF = Z - self.l1 - PD                   # Høyde (Z) mellom C og hjelpe-punkt F
-        AC = sqrt(pow(AF, 2) + pow(CF, 2))
+        AC = sqrt(pow(AF, 2) + pow(CF, 2))      # distance mellom punkt A og C, via hjelpe-punkt F
         if round(CF, 4) < -self.l1:
             logger.debug('高度低于0, CF(%s)<l1(%s)', CF, -self.l1)
             return False
-        if self.l2 + self.l3 < round(AC, 4): #两边之和小于第三边
+        if self.l2 + self.l3 < round(AC, 4): # The sum of two sides is less than the third side
             logger.debug('Cannot establish linkage mechanism, l2(%s) + l3(%s) < AC(%s)', self.l2, self.l3, AC)
             return False
 
