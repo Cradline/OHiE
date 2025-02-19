@@ -61,7 +61,8 @@ class IK:
         X, Y, Z = coordinate_data
         if self.arm_type == 'pump':
             Alpha -= self.alpha
-        # Theta6 = base rotation angle
+
+        # Theta_6 = base rotation angle
         theta6 = degrees(atan2(Y, X))           # den vi tegne ovenfra som theta_1, base-servo: rotasjon rundt Z_0
  
         P_O = sqrt(X*X + Y*Y)                   # distanse fra Origo til ende-effektor
@@ -70,7 +71,7 @@ class IK:
         AF = P_O - CD                           # distanse fra Origo (eller A) til hjelpe-punkt F, langs X i XZ.  
         CF = Z - self.l1 - PD                   # Høyde (Z) mellom C og hjelpe-punkt F
         AC = sqrt(pow(AF, 2) + pow(CF, 2))      # distance mellom punkt A og C, via hjelpe-punkt F
-        
+
         if round(CF, 4) < -self.l1:
             logger.debug('Height below 0, CF(%s)<l1(%s)', CF, -self.l1)
             return False
@@ -78,15 +79,15 @@ class IK:
             logger.debug('Cannot establish linkage mechanism, l2(%s) + l3(%s) < AC(%s)', self.l2, self.l3, AC)
             return False
 
-        #求theat4
-        cos_ABC = round((pow(self.l2, 2) + pow(self.l3, 2) - pow(AC, 2))/(2*self.l2*self.l3), 4) # Law of cosines
-        if abs(cos_ABC) > 1:
-            logger.debug('Cannot establish linkage mechanism, abs(cos_ABC(%s)) > 1', cos_ABC)
+        # Theta_4
+        cos_phi_B = round((pow(self.l2, 2) + pow(self.l3, 2) - pow(AC, 2))/(2*self.l2*self.l3), 4) # Law of cosines
+        if abs(phi_B) > 1:
+            logger.debug('Cannot establish linkage mechanism, abs(cos_phi_B(%s)) > 1', cos_phi_B)
             return False
-        ABC = acos(cos_ABC) #反三角算出弧度
-        theta4 = 180.0 - degrees(ABC)
+        phi_B = acos(cos_phi_B)             # Finner vinkel phi_B i [rad]
+        theta4 = 180.0 - degrees(phi_B)     # konverterer til grader
 
-        #求theta5
+        # Theta_5
         CAF = acos(AF / AC)
         cos_BAC = round((pow(AC, 2) + pow(self.l2, 2) - pow(self.l3, 2))/(2*self.l2*AC), 4) # Law of cosines
         if abs(cos_BAC) > 1:
@@ -98,7 +99,7 @@ class IK:
             zf_flag = 1
         theta5 = degrees(CAF * zf_flag + acos(cos_BAC))
 
-        #求theta3
+        # Theta_3
         theta3 = Alpha - theta5 + theta4
         if self.arm_type == 'pump':
             theta3 += self.alpha
