@@ -39,7 +39,7 @@ class IK:
         self.l4 = L4
         self.l5 = L5
         self.l6 = L6
-        if self.arm_type == 'pump':
+        if self.arm_type == 'pump':                             # Trolig mulig 
             self.l4 = sqrt(pow(self.l5, 2) + pow(self.l6, 2))
             self.alpha = degrees(atan(self.l6 / self.l5))
 
@@ -52,7 +52,7 @@ class IK:
 
     def getRotationAngle(self, coordinate_data, Alpha):
         # Given the specified coordinates and pitch angle, return the angles each joint should rotate. If no solution is found, return False.
-        # coordinate_data is the coordinates of the end effector, in centimeters (cm), passed as a tuple, e.g., (0, 5, 10).
+        # coordinate_data is the coordinates of the end effector P_E/P, in centimeters (cm), passed as a tuple, e.g; (0, 5, 10).
         # Alpha is the angle between the end effector and the horizontal plane, in degrees.
 
         # Point P(X,Y,Z) is the end effector (P_E). O is the Origin projected on the ground. P is the projection of point P(X,Y,Z) on the ground.
@@ -69,7 +69,7 @@ class IK:
  
         P_O = sqrt(X*X + Y*Y)                   # distanse fra Origo til ende-effektor
         CD = self.l4 * cos(radians(Alpha))      # Lengde (X) fra ledd-C til ende-effektor (hjelpe-punkt D)
-        PD = self.l4 * sin(radians(Alpha))      # Høyde (Z) fra ledd-C til ende-effektor (hjelpe-punkt D). Alpha pos -> PD = pos, Alpha neg -> PD = neg.
+        PD = self.l4 * sin(radians(Alpha))      # Høyde (Z) fra ledd-C til ende-effektor, (hjelpe-punkt D). Alpha pos -> PD = pos, Alpha neg -> PD = neg.
         AF = P_O - CD                           # distanse fra Origo (eller A) til hjelpe-punkt F, langs X i XZ.  
         CF = Z - self.l1 - PD                   # Høyde (Z) mellom C og hjelpe-punkt F
         AC = sqrt(pow(AF, 2) + pow(CF, 2))      # distance mellom punkt A og C, via hjelpe-punkt F
@@ -89,22 +89,22 @@ class IK:
         phi_B = acos(cos_phi_B)             # Finner vinkel phi_B i [rad]
         theta4 = 180.0 - degrees(phi_B)     # konverterer til grader
 
-        # Theta_5
-        CAF = acos(AF / AC)
+        # Theta_5. 
+        CAF = acos(AF / AC)         # CAF = vinkel mellom AF og CF. 
         cos_BAC = round((pow(AC, 2) + pow(self.l2, 2) - pow(self.l3, 2))/(2*self.l2*AC), 4) # Law of cosines
         if abs(cos_BAC) > 1:
             logger.debug('Cannot establish linkage mechanism, abs(cos_BAC(%s)) > 1', cos_BAC)
             return False
-        if CF < 0:
-            zf_flag = -1
+        if CF < 0:                  # Hvis CF er negativ, betyr det at punkt F er over punkt C. zf flag settes til negativ for å justere vinkel CAF
+            zf_flag = -1            # Hvis F er under punkt C, er CAF positiv
         else:
             zf_flag = 1
         theta5 = degrees(CAF * zf_flag + acos(cos_BAC))
 
         # Theta_3
         theta3 = Alpha - theta5 + theta4
-        if self.arm_type == 'pump':
-            theta3 += self.alpha
+        if self.arm_type == 'pump':     # Trolig unødvendig og kan slettes
+            theta3 += self.alpha        # same
 
         return {"theta3":theta3, "theta4":theta4, "theta5":theta5, "theta6":theta6} # Returns the angles if there is a solution
             
