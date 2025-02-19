@@ -10,17 +10,17 @@ logging.basicConfig(level=logging.ERROR)
 logger = logging.getLogger(__name__)
 
 class IK:
-    # 舵机从下往上数
-    # 公用参数，即4自由度机械臂的连杆参数
-    l1 = 8.00    #机械臂底盘中心到第二个舵机中心轴的距离6.10cm
-    l2 = 6.50   #第二个舵机到第三个舵机的距离10.16cm
-    l3 = 6.20    #第三个舵机到第四个舵机的距离9.64cm
-    l4 = 0.00    #这里不做具体赋值，根据初始化时的选择进行重新赋值
+    # Servos are counted from bottom to top.
+    # Link parameters of the 4-DOF robotic arm.
+    l1 = 8.00       #Distance from the center of the robotic arm base to the axis of the second servo: 6.10 cm.
+    l2 = 6.50       #Distance from the second servo to the third servo: 10.16 cm.
+    l3 = 6.20       #Distance from the third servo to the fourth servo: 9.64 cm.
+    l4 = 0.00       #这里不做具体赋值，根据初始化时的选择进行重新赋值
 
-    # 气泵款特有参数
-    l5 = 4.70  #第四个舵机到吸嘴正上方的距离4.70cm
-    l6 = 4.46  #吸嘴正上方到吸嘴的距离4.46cm
-    alpha = degrees(atan(l6 / l5))  #计算l5和l4的夹角
+    # Parameters specific to the pneumatic pump version.
+    l5 = 4.70  #Distance from the fourth servo to directly above the suction nozzle: 4.70 cm.
+    l6 = 4.46  #Distance from directly above the suction nozzle to the suction nozzle: 4.46 cm.
+    alpha = degrees(atan(l6 / l5))  #Calculates the angle between l5 and l4
 
     def __init__(self, arm_type): #根据不同款的夹持器，适配参数
         self.arm_type = arm_type
@@ -30,7 +30,7 @@ class IK:
             self.l4 = 10.00  #第四个舵机到机械臂末端的距离16.6cm， 机械臂末端是指爪子完全闭合时
 
     def setLinkLength(self, L1=l1, L2=l2, L3=l3, L4=l4, L5=l5, L6=l6):
-        # 更改机械臂的连杆长度，为了适配相同结构不同长度的机械臂
+        # Change the link lengths of the robotic arm to adapt to arms of the same structure but different lengths.
         self.l1 = L1
         self.l2 = L2
         self.l3 = L3
@@ -42,32 +42,33 @@ class IK:
             self.alpha = degrees(atan(self.l6 / self.l5))
 
     def getLinkLength(self):
-        # 获取当前设置的连杆长度
+        # Get the currently set link lengths.
         if self.arm_type == 'pump':
             return {"L1":self.l1, "L2":self.l2, "L3":self.l3, "L4":self.l4, "L5":self.l5, "L6":self.l6}
         else:
             return {"L1":self.l1, "L2":self.l2, "L3":self.l3, "L4":self.l4}
 
     def getRotationAngle(self, coordinate_data, Alpha):
-        # 给定指定坐标和俯仰角，返回每个关节应该旋转的角度，如果无解返回False
-        # coordinate_data为夹持器末端坐标，坐标单位cm， 以元组形式传入，例如(0, 5, 10)
-        # Alpha为夹持器与水平面的夹角，单位度
+        # Given the specified coordinates and pitch angle, return the angles each joint should rotate. If no solution is found, return False.
+        # coordinate_data is the coordinates of the end effector, in centimeters (cm), passed as a tuple, e.g., (0, 5, 10).
+        # Alpha is the angle between the end effector and the horizontal plane, in degrees.
 
-        # 设夹持器末端为P(X, Y, Z), 坐标原点为O, 原点为云台中心在地面的投影， P点在地面的投影为P_
-        # l1与l2的交点为A, l2与l3的交点为B，l3与l4的交点为C
-        # CD与PD垂直，CD与z轴垂直，则俯仰角Alpha为DC与PC的夹角, AE垂直DP_， 且E在DP_上， CF垂直AE，且F在AE上
-        # 夹角表示：例如AB和BC的夹角表示为ABC
+        # Point P(X,Y,Z) is the end effector. O is the Origin projected on the ground. P is the projection of point P(X,Y,Z) on the ground.
+        # Point A is the intersection between l1 and l2. Point B is the intersection between l2 and l3. Point C is the intersection between l3 and l4.
+        # CD = vinkelrett på PD og Z-aksen. Pitch angle Alpha er vinkel mellom CD og PC. 
+        # Vinkler er representert på følgende måte: Vinkel mellom AB og BC er ABC
+        
         X, Y, Z = coordinate_data
         if self.arm_type == 'pump':
             Alpha -= self.alpha
-        #求底座旋转角度
+        # Theta6 = base rotation angle
         theta6 = degrees(atan2(Y, X))           # den vi tegne ovenfra som theta_1, base-servo: rotasjon rundt Z_0
  
-        P_O = sqrt(X*X + Y*Y)                   # distanse fra origo til ende-effektor
-        CD = self.l4 * cos(radians(Alpha))
-        PD = self.l4 * sin(radians(Alpha))      # When the pitch angle is positive, PD is positive, and when the pitch angle is negative, PD is negative.
-        AF = P_O - CD
-        CF = Z - self.l1 - PD
+        P_O = sqrt(X*X + Y*Y)                   # distanse fra Origo til ende-effektor
+        CD = self.l4 * cos(radians(Alpha))      # Lengde (X) fra ledd-D til ende-effektor
+        PD = self.l4 * sin(radians(Alpha))      # Høyde (Z?) fra ledd-D til ende-effektor. Alpha pos -> PD = pos, Alpha neg -> PD = neg.
+        AF = P_O - CD                           # distanse fra Origo til D ?
+        CF = Z - self.l1 - PD                   # Høyde fra Origo til 
         AC = sqrt(pow(AF, 2) + pow(CF, 2))
         if round(CF, 4) < -self.l1:
             logger.debug('高度低于0, CF(%s)<l1(%s)', CF, -self.l1)
