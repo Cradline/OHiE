@@ -22,7 +22,7 @@ class IK:
     l6 = 4.46  #Distance from directly above the suction nozzle to the suction nozzle: 4.46 cm.
     alpha = degrees(atan(l6 / l5))  #Calculates the angle between l5 and l4
 
-    def __init__(self, arm_type): #根据不同款的夹持器，适配参数
+    def __init__(self, arm_type): # Revolusjons eller prismatisk ende-effektor
         self.arm_type = arm_type
         if self.arm_type == 'pump': #如果是气泵款机械臂
             self.l4 = sqrt(pow(self.l5, 2) + pow(self.l6, 2))  #第四个舵机到吸嘴作为第四个连杆
@@ -57,7 +57,7 @@ class IK:
         # Point A is the intersection between l1 and l2. Point B is the intersection between l2 and l3. Point C is the intersection between l3 and l4.
         # CD = vinkelrett på PD og Z-aksen. Pitch angle Alpha er vinkel mellom CD og PC. 
         # Vinkler er representert på følgende måte: Vinkel mellom AB og BC er ABC
-        
+
         X, Y, Z = coordinate_data
         if self.arm_type == 'pump':
             Alpha -= self.alpha
@@ -65,8 +65,8 @@ class IK:
         theta6 = degrees(atan2(Y, X))           # den vi tegne ovenfra som theta_1, base-servo: rotasjon rundt Z_0
  
         P_O = sqrt(X*X + Y*Y)                   # distanse fra Origo til ende-effektor
-        CD = self.l4 * cos(radians(Alpha))      # Lengde (X) fra ledd-D til ende-effektor
-        PD = self.l4 * sin(radians(Alpha))      # Høyde (Z?) fra ledd-D til ende-effektor. Alpha pos -> PD = pos, Alpha neg -> PD = neg.
+        CD = self.l4 * cos(radians(Alpha))      # Lengde (X) fra ledd-C til ende-effektor (hjelpe-punkt D)
+        PD = self.l4 * sin(radians(Alpha))      # Høyde (Z) fra ledd-C til ende-effektor (hjelpe-punkt D). Alpha pos -> PD = pos, Alpha neg -> PD = neg.
         AF = P_O - CD                           # distanse fra Origo til D ?
         CF = Z - self.l1 - PD                   # Høyde fra Origo til 
         AC = sqrt(pow(AF, 2) + pow(CF, 2))
