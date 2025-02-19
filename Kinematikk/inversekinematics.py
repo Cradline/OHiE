@@ -17,37 +17,38 @@ class IK:
     l1 = 8.00       #Distance from the center of the robotic arm base to the axis of the second servo: 6.10 cm.
     l2 = 6.50       #Distance from the second servo to the third servo: 10.16 cm.
     l3 = 6.20       #Distance from the third servo to the fourth servo: 9.64 cm.
-    l4 = 0.00       #Placeholder
+    l4 = 10.00      #Placeholder: 10cm Servo 4 til klo tip
 
     # Parameters specific to the pneumatic pump version.
-    l5 = 4.70  #Distance from the fourth servo to directly above the suction nozzle: 4.70 cm.
-    l6 = 4.46  #Distance from directly above the suction nozzle to the suction nozzle: 4.46 cm.
-    alpha = degrees(atan(l6 / l5))  #Calculates the angle between l5 and l4
+    #l5 = 4.70  #Distance from the fourth servo to directly above the suction nozzle: 4.70 cm.
+    #l6 = 4.46  #Distance from directly above the suction nozzle to the suction nozzle: 4.46 cm.
+    #alpha = degrees(atan(l6 / l5))  #Calculates the angle between l5 and l4
 
     def __init__(self, arm_type): # Revolusjons eller prismatisk ende-effektor
         self.arm_type = arm_type
-        if self.arm_type == 'pump': # Trolig unødvendig
-            self.l4 = sqrt(pow(self.l5, 2) + pow(self.l6, 2))  # unødvendig
-        elif self.arm_type == 'arm':
-            self.l4 = 10.00  #The distance from the fourth servo to the end of the robotic arm is 16.6cm? Claw closed.
+        #if self.arm_type == 'pump': # Trolig unødvendig
+        #    self.l4 = sqrt(pow(self.l5, 2) + pow(self.l6, 2))  # unødvendig
+        #elif self.arm_type == 'arm':
+        #    self.l4 = 10.00  #The distance from the fourth servo to the end of the robotic arm is 16.6cm? Claw closed.
+        self.arm_type == 'arm'
 
-    def setLinkLength(self, L1=l1, L2=l2, L3=l3, L4=l4, L5=l5, L6=l6):
+    def setLinkLength(self, L1=l1, L2=l2, L3=l3, L4=l4):#, L5=l5, L6=l6):
         # Change the link lengths of the robotic arm to adapt to arms of the same structure but different lengths.
         self.l1 = L1
         self.l2 = L2
         self.l3 = L3
         self.l4 = L4
-        self.l5 = L5
-        self.l6 = L6
-        if self.arm_type == 'pump':                             # Trolig mulig 
-            self.l4 = sqrt(pow(self.l5, 2) + pow(self.l6, 2))
-            self.alpha = degrees(atan(self.l6 / self.l5))
+        #self.l5 = L5
+        #self.l6 = L6
+        #if self.arm_type == 'pump':                             # Trolig mulig 
+        #    self.l4 = sqrt(pow(self.l5, 2) + pow(self.l6, 2))
+        #    self.alpha = degrees(atan(self.l6 / self.l5))
 
     def getLinkLength(self):
         # Get the currently set link lengths.
-        if self.arm_type == 'pump':
-            return {"L1":self.l1, "L2":self.l2, "L3":self.l3, "L4":self.l4, "L5":self.l5, "L6":self.l6}
-        else:
+        #if self.arm_type == 'pump':
+        #    return {"L1":self.l1, "L2":self.l2, "L3":self.l3, "L4":self.l4, "L5":self.l5, "L6":self.l6}
+        #else:
             return {"L1":self.l1, "L2":self.l2, "L3":self.l3, "L4":self.l4}
 
     def getRotationAngle(self, coordinate_data, Alpha):
@@ -61,8 +62,8 @@ class IK:
         # Vinkler er representert på følgende måte: Vinkel mellom AB og BC er ABC
 
         X, Y, Z = coordinate_data
-        if self.arm_type == 'pump':
-            Alpha -= self.alpha
+        #if self.arm_type == 'pump':
+        #    Alpha -= self.alpha
 
         # Theta_6 = base rotation angle
         theta6 = degrees(atan2(Y, X))           # den vi tegne ovenfra som theta_1, base-servo: rotasjon rundt Z_0
@@ -103,8 +104,8 @@ class IK:
 
         # Theta_3
         theta3 = Alpha - theta5 + theta4
-        if self.arm_type == 'pump':     # Trolig unødvendig og kan slettes
-            theta3 += self.alpha        # same
+        #if self.arm_type == 'pump':     # Trolig unødvendig og kan slettes
+        #    theta3 += self.alpha        # same
 
         return {"theta3":theta3, "theta4":theta4, "theta5":theta5, "theta6":theta6} # Returns the angles if there is a solution
             
