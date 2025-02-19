@@ -19,6 +19,7 @@ def get_user_input():
         print("Invalid input. Please enter numeric values.")
         return None, None
 
+#test comment
 def main():
     # Initialize the motor control board and inverse kinematics solver
     board = Board()
