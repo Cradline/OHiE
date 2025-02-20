@@ -53,12 +53,12 @@ class IK:
         # Theta_1 = rotasjonsvinkel til baseledd (servo1); rotasjon rundt Z_0.
         theta1 = degrees(atan2(Y, X))
 
-        P_O = sqrt(X*X + Y*Y)                   # distanse fra Origo til ende-effektor
+        P_O = sqrt(X*X + Y*Y)                   # Distanse fra Origo til ende-effektor
         CD = self.l4 * cos(radians(Alpha))      # Lengde (X) fra ledd-C til ende-effektor (hjelpe-punkt D)
         PD = self.l4 * sin(radians(Alpha))      # Høyde (Z) fra ledd-C til ende-effektor, (hjelpe-punkt D). Alpha pos -> PD = pos, Alpha neg -> PD = neg.
-        AF = P_O - CD                           # distanse fra Origo (eller A) til hjelpe-punkt F, langs X i XZ.  
+        AF = P_O - CD                           # Distanse fra Origo (eller A) til hjelpe-punkt F, langs X i XZ.  
         CF = Z - self.l1 - PD                   # Høyde (Z) mellom C og hjelpe-punkt F
-        AC = sqrt(pow(AF, 2) + pow(CF, 2))      # distance mellom punkt A og C, via hjelpe-punkt F
+        AC = sqrt(pow(AF, 2) + pow(CF, 2))      # Distance mellom punkt A og C, via hjelpe-punkt F
 
         # Sjekker at høydeverdi er konsistent med verdensrammen.
         if round(CF, 4) < -self.l1:
@@ -72,16 +72,16 @@ class IK:
         cos_phi_B = round((pow(self.l2, 2) + pow(self.l3, 2) - pow(AC, 2))/(2*self.l2*self.l3), 4) # Law of cosines
         if abs(phi_B) > 1:
             logger.debug('Ugyldig koblingsmekanisme, abs(cos_phi_B(%s)) > 1', cos_phi_B)
-            return False
+            return False                    # Sjekker for gyldig verdi
         phi_B = acos(cos_phi_B)             # Finner vinkel phi_B i [rad]
-        theta3 = 180.0 - degrees(phi_B)     # konverterer til grader
+        theta3 = 180.0 - degrees(phi_B)     # Konverterer til grader
 
         # Theta_2. 
         CAF = acos(AF / AC)         # CAF = vinkel mellom AF og CF. 
         cos_BAC = round((pow(AC, 2) + pow(self.l2, 2) - pow(self.l3, 2))/(2*self.l2*AC), 4) # Law of cosines
         if abs(cos_BAC) > 1:
             logger.debug('Ugyldig koblingsmekanisme, abs(cos_BAC(%s)) > 1', cos_BAC)
-            return False
+            return False            # Sjekker for gyldig verdi
         if CF < 0:                  # Hvis CF er negativ, betyr det at punkt F er over punkt C. zf flag settes til negativ for å justere vinkel CAF
             zf_flag = -1            # Hvis F er under punkt C, er CAF positiv
         else:
