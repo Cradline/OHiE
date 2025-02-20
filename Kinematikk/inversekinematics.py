@@ -76,6 +76,7 @@ class IK:
         CF = Z - self.l1 - PD                   # Høyde (Z) mellom C og hjelpe-punkt F
         AC = sqrt(pow(AF, 2) + pow(CF, 2))      # distance mellom punkt A og C, via hjelpe-punkt F
 
+        # Checking if height value is consistent with worldframe.
         if round(CF, 4) < -self.l1:
             logger.debug('Height below 0, CF(%s)<l1(%s)', CF, -self.l1)
             return False
