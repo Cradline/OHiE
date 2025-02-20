@@ -12,11 +12,9 @@ logging.basicConfig(level=logging.ERROR)
 logger = logging.getLogger(__name__)
 
 class IK:
-    # Lenke parametre 
-    ##########################
 
     # Servos telles fra bunn til topp.
-    # Lenker:
+    # Lenke parametre:
     l1 = 8.00       # Distansen fra senter av basen (servo1) til servo2: 6.10 cm.
                     # Må kanskje padde l1 litt mtp hjul og chassis
     l2 = 6.50       # Distansen fra servo2 til servo3: 10.16 cm.
@@ -37,7 +35,6 @@ class IK:
 
     def getLinkLength(self):
         # Henter ut lengdene på lenkene
-
         return {"L1":self.l1, "L2":self.l2, "L3":self.l3, "L4":self.l4}
     
 
