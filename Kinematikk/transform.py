@@ -116,19 +116,19 @@ def getCenter(rect, roi, size, square_length):
 # 参数：机械臂末端坐标, 木块旋转角
 def getAngle(x, y, angle):
     # beregner vinkler for en gitt posisjon
-    theta6 = round(math.degrees(math.atan2(abs(x), abs(y))), 1)
+    theta1 = round(math.degrees(math.atan2(abs(x), abs(y))), 1)
     angle = abs(angle)
     
     if x < 0:
         if y < 0:
-            angle1 = -(90 + theta6 - angle)
+            angle1 = -(90 + theta1 - angle)
         else:
-            angle1 = theta6 - angle
+            angle1 = theta1 - angle
     else:
         if y < 0:
-            angle1 = theta6 + angle
+            angle1 = theta1 + angle
         else:
-            angle1 = 90 - theta6 - angle
+            angle1 = 90 - theta1 - angle
 
     if angle1 > 0:
         angle2 = angle1 - 90
