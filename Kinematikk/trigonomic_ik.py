@@ -50,8 +50,8 @@ class IK:
 
         X, Y, Z = coordinate_data
 
-        # Theta_1 = rotasjonsvinkel til baseledd (servo1); rotasjon rundt Z_0.
-        theta1 = degrees(atan2(Y, X))
+        # Theta_6 = rotasjonsvinkel til baseledd (servo1); rotasjon rundt Z_0.
+        theta6 = degrees(atan2(Y, X))
 
         P_O = sqrt(X*X + Y*Y)                   # Distanse fra Origo til ende-effektor
         CD = self.l4 * cos(radians(Alpha))      # Lengde (X) fra ledd-C til ende-effektor (hjelpe-punkt D)
@@ -68,15 +68,15 @@ class IK:
             logger.debug('Ugyldig koblingsmekanisme, l2(%s) + l3(%s) < AC(%s)', self.l2, self.l3, AC)
             return False
         
-        # Theta_3. phi_B = vinkel ABC, mellom AB og BC
+        # Theta_4. phi_B = vinkel ABC, mellom AB og BC
         cos_phi_B = round((pow(self.l2, 2) + pow(self.l3, 2) - pow(AC, 2))/(2*self.l2*self.l3), 4) # Law of cosines
         if abs(phi_B) > 1:
             logger.debug('Ugyldig koblingsmekanisme, abs(cos_phi_B(%s)) > 1', cos_phi_B)
             return False                    # Sjekker for gyldig verdi
         phi_B = acos(cos_phi_B)             # Finner vinkel phi_B i [rad]
-        theta3 = 180.0 - degrees(phi_B)     # Konverterer til grader
+        theta4 = 180.0 - degrees(phi_B)     # Konverterer til grader
 
-        # Theta_2. 
+        # Theta_5. 
         CAF = acos(AF / AC)         # CAF = vinkel mellom AF og CF. 
         cos_BAC = round((pow(AC, 2) + pow(self.l2, 2) - pow(self.l3, 2))/(2*self.l2*AC), 4) # Law of cosines
         if abs(cos_BAC) > 1:
@@ -86,13 +86,13 @@ class IK:
             zf_flag = -1            # Hvis F er under punkt C, er CAF positiv
         else:
             zf_flag = 1
-        theta2 = degrees(CAF * zf_flag + acos(cos_BAC))
+        theta5 = degrees(CAF * zf_flag + acos(cos_BAC))
 
-        # Theta_4
-        theta4 = Alpha - theta2 + theta3
+        # Theta_3
+        theta3 = Alpha - theta5 + theta4
 
 
-        return {"theta4":theta4, "theta3":theta3, "theta2":theta2, "theta1":theta1} # Returns the angles if there is a solution
+        return {"theta3":theta3, "theta4":theta4, "theta5":theta5, "theta6":theta6} # Returns the angles if there is a solution
             
 if __name__ == '__main__':
     ik = IK('arm')
