@@ -28,6 +28,7 @@ class IK:
 
     def setLinkLength(self, L1=l1, L2=l2, L3=l3, L4=l4):
         # Kan endre lengden på lenker her dersom prismatiske ledd introduseres
+        # eller hvis manuell justering av parametre blir nødvendig
         self.l1 = L1
         self.l2 = L2
         self.l3 = L3
