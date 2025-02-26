@@ -70,12 +70,12 @@ class IK:
             return False
         
         # Theta_4. phi_B = vinkel ABC, mellom AB og BC
-        cos_phi_B = round((pow(self.l2, 2) + pow(self.l3, 2) - pow(AC, 2))/(2*self.l2*self.l3), 4) # Law of cosines
-        if abs(phi_B) > 1:
-            logger.debug('Ugyldig koblingsmekanisme, abs(cos_phi_B(%s)) > 1', cos_phi_B)
+        cos_ABC = round((pow(self.l2, 2) + pow(self.l3, 2) - pow(AC, 2))/(2*self.l2*self.l3), 4) # Law of cosines
+        if abs(cos_ABC) > 1:
+            logger.debug('Ugyldig koblingsmekanisme, abs(cos_phi_B(%s)) > 1', cos_ABC)
             return False                    # Sjekker for gyldig verdi
-        phi_B = acos(cos_phi_B)             # Finner vinkel phi_B i [rad]
-        theta4 = 180.0 - degrees(phi_B)     # Konverterer til grader
+        ABC = acos(cos_ABC)             # Finner vinkel phi_B i [rad]
+        theta4 = 180.0 - degrees(ABC)     # Konverterer til grader
 
         # Theta_5. 
         CAF = acos(AF / AC)         # CAF = vinkel mellom AF og CF. 
