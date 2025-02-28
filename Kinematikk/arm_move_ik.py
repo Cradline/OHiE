@@ -30,7 +30,7 @@ class ArmIK:
         self.setServoRange()
 
     def setServoRange(self, servo3_Range=servo3Range, servo4_Range=servo4Range, servo5_Range=servo5Range, servo6_Range=servo6Range):
-        # 适配不同的舵机
+        # 适配不同的舵机 delta(pulsbreddeintervall) / delta(vinkelintervall) = 11.11us/grad
         self.servo3Range = servo3_Range
         self.servo4Range = servo4_Range
         self.servo5Range = servo5_Range
