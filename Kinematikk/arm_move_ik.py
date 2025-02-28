@@ -21,7 +21,7 @@ l4 = ik.l4
 ik.setLinkLength(L1=l1+1.3, L4=l4)
 
 class ArmIK:
-    servo3Range = (500, 2500.0, 0, 180.0) # Pulsbredde，Vinkel
+    servo3Range = (500, 2500.0, 0, 180.0) # Pulsbredde [us]，Vinkel [deg]
     servo4Range = (500, 2500.0, 0, 180.0)
     servo5Range = (500, 2500.0, 0, 180.0)
     servo6Range = (500, 2500.0, 0, 180.0)
@@ -104,14 +104,14 @@ class ArmIK:
         return False
 
 # coordinate_data = x, y, z koordinater i verdensrammen [cm] fra senter/bunn av robotarm
-# alpha = vinkel til bunn servo (rundt z akse)
-# alpha 1, alpha 2 = [0,180] grader, mulig rotasjon for bunnservo
+# alpha = vinkel til ende-effektor
+# alpha 1, alpha 2 = [0,180], vinkelutslag ende-effektor
 # movetime = tid i [ms] for å utfør bevegelsen
 
 
     def setPitchRangeMoving(self, coordinate_data, alpha, alpha1, alpha2, movetime = None):
 
-# Gitt koordinater coordinate_data og pitch-vinkel alpha, samt pitch-vinkelområdet alpha1 og alpha2,
+# Gitt koordinater coordinate_data og pitch-vinkel alpha, samt pitch-intervallet alpha1 og alpha2,
 # automatisk finn den løsningen som er nærmest den gitte pitch-vinkelen og flytt til målposisjonen.
 # Hvis det ikke finnes noen løsning, returner False. Ellers returner servo-vinkler, pitch-vinkel og kjøretid.
 # Koordinatene er i centimeter og sendes som en tuppel, for eksempel (0, 5, 10).
