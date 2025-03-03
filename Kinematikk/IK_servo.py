@@ -14,3 +14,17 @@ import common.yaml_handle as yaml_handle
 deviation_data = yaml_handle.get_yaml_data(yaml_handle.Deviation_file_path)
 
 # Vinkler regnes ut i IK klassen fra IK_geo
+ik = IK('arm')
+
+# Angir lenge på lenker
+l1 = ik.l1
+l4 = ik.l4
+ik.setLinkLength(L1=l1+1.3, L4=l4)
+
+# Klasse for servokontroll
+class ArmIK:
+    # Pulsbredde intervall [us], vinkelintervall [deg]
+    servo3Range = (500, 2500.0, 0, 180.0)
+    servo4Range = (500, 2500.0, 0, 180.0)
+    servo5Range = (500, 2500.0, 0, 180.0)
+    servo6Range = (500, 2500.0, 0, 180.0)
