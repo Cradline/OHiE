@@ -24,10 +24,10 @@ ik.setLinkLength(L1=l1+1.3, L4=l4)
 # Klasse for servokontroll
 class ArmIK:
     # Pulsbredde intervall [us], vinkelintervall [deg]
-    servo3Range = (500, 2500.0, 0, 180.0)
-    servo4Range = (500, 2500.0, 0, 180.0)
-    servo5Range = (500, 2500.0, 0, 180.0)
-    servo6Range = (500, 2500.0, 0, 180.0)
+    servo3Range = (500, 2500.0, 0, 180.0)       # Servo ID3: 
+    servo4Range = (500, 2500.0, 0, 180.0)       # Servo ID4: 
+    servo5Range = (500, 2500.0, 0, 180.0)       # Servo ID5: 
+    servo6Range = (500, 2500.0, 0, 180.0)       # Servo ID6: Base-ledd
 
     def __init__(self):
         self.setServoRange()
@@ -39,3 +39,8 @@ class ArmIK:
         self.servo5Range = servo5_Range
         self.servo6Range = servo6_Range
 
+        # Regner ut pulsbredde per grad i [us/deg]
+        self.servo3Param = ((self.servo3Range[1] - self.servo3Range[0]) / (self.servo3Range[3] - self.servo3Range[2]))
+        self.servo4Param = ((self.servo4Range[1] - self.servo4Range[0]) / (self.servo4Range[3] - self.servo4Range[2]))
+        self.servo5Param = ((self.servo5Range[1] - self.servo5Range[0]) / (self.servo5Range[3] - self.servo5Range[2]))
+        self.servo6Param = ((self.servo6Range[1] - self.servo6Range[0]) / (self.servo6Range[3] - self.servo6Range[2]))
