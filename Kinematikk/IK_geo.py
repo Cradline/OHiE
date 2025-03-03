@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 class IK:
 
     # Servos telles fra bunn til topp.
-    # Lenke parametre:
+    # Lenkeparametre:
     l1 = 8.00       # Distansen fra senter av basen (servo1) til servo2: 6.10 cm.
                     # Må kanskje padde l1 litt mtp hjul og chassis
     l2 = 6.50       # Distansen fra servo2 til servo3: 10.16 cm.
