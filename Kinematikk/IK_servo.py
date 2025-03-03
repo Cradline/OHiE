@@ -67,7 +67,7 @@ class ArmIK:
             logger.info('servo5(%s)Utenfor gyldig område(%s, %s)', servo5, self.servo5Range[0], self.servo5Range[1])
             return False
         
-        # Sjekker hvilken kvadrant servo6 skal rotere til
+        # Konverterer til +deg hvis deg < -90. Med eller mot klokka
         if theta6 < -(self.servo6Range[3] - self.servo6Range[2])/2:
             # Hvis theta6 < -90 [deg] -> servo6 = (180-0)/2 + 90 + (180 + theta6)
             servo6 = int(round(((self.servo6Range[3] - self.servo6Range[2])/2 + (90 + (180 + theta6))) * self.servo6Param))
