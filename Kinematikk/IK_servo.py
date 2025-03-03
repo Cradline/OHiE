@@ -47,6 +47,7 @@ class ArmIK:
 
     def transformAngelAdaptArm(self, theta3, theta4, theta5, theta6):
         # Konverterer vinkler fra IK_geo til korresponderende pulslengder
+        # Inkludert mapping fra [0,180] til [-90,90]
 
         # Vinkel [deg] * 11.11 [us/deg] + (2500 + 500)/2 [us]
         servo3 = int(round(theta3 * self.servo3Param + (self.servo3Range[1] + self.servo3Range[0])/2))
