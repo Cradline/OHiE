@@ -28,3 +28,14 @@ class ArmIK:
     servo4Range = (500, 2500.0, 0, 180.0)
     servo5Range = (500, 2500.0, 0, 180.0)
     servo6Range = (500, 2500.0, 0, 180.0)
+
+    def __init__(self):
+        self.setServoRange()
+
+    def setServoRange(self, servo3_Range=servo3Range, servo4_Range=servo4Range, servo5_Range=servo5Range, servo6_Range=servo6Range):
+        # Angir intervall for servos
+        self.servo3Range = servo3_Range
+        self.servo4Range = servo4_Range
+        self.servo5Range = servo5_Range
+        self.servo6Range = servo6_Range
+
