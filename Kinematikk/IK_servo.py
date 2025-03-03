@@ -47,7 +47,7 @@ class ArmIK:
 
     def transformAngelAdaptArm(self, theta3, theta4, theta5, theta6):
         # Konverterer vinkler fra IK_geo til korresponderende pulslengder
-        
+
         # Vinkel [deg] * 11.11 [us/deg] + (2500 + 500)/2 [us]
         servo3 = int(round(theta3 * self.servo3Param + (self.servo3Range[1] + self.servo3Range[0])/2))
         if servo3 > self.servo3Range[1] or servo3 < self.servo3Range[0]:
@@ -69,7 +69,7 @@ class ArmIK:
         
         # Sjekker hvilken kvadrant servo6 skal rotere til
         if theta6 < -(self.servo6Range[3] - self.servo6Range[2])/2:
-            # Hvis theta6 < -180 [deg] -> servo6 = (180-0)/2 + 90 + (180 + theta6)
+            # Hvis theta6 < -90 [deg] -> servo6 = (180-0)/2 + 90 + (180 + theta6)
             servo6 = int(round(((self.servo6Range[3] - self.servo6Range[2])/2 + (90 + (180 + theta6))) * self.servo6Param))
         else:
             # Hvis ikke: servo6 = ((180-0)/2 -(90-theta6))* 11.11us + 500us 
