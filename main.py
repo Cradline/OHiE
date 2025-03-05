@@ -87,6 +87,8 @@ class ArmController:
         self.current_pos[1] = max(5, min(20, self.current_pos[1]))     # Y limits
         self.current_pos[2] = max(10, min(25, self.current_pos[2]))     # Z limits
 
+    # Fungerer ikke helt korrekt. Verdier oppdateres, men 
+    # minimalt utslag i ledd C. 
     def update_pitch(self, delta):
         self.current_pitch = max(-90, min(90, 
             self.current_pitch + delta * self.pitch_sensitivity))
@@ -128,8 +130,7 @@ def main():
                 time.sleep(1)
                 continue'''
 
-            
-            
+                
             # Avslutter programmet ved å trykke 'start'
             if inputs.get('start', 0):
                 break
