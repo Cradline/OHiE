@@ -7,7 +7,7 @@ from common.ros_robot_controller_sdk import Board
 from kinematics.arm_move_ik import ArmIK
 # from kinematics.IK_servo import ArmIK
 
-# Controller klasse med pygame input
+# Controller klasse 
 class XboxController:
     def __init__(self):
         pygame.init()
@@ -19,9 +19,9 @@ class XboxController:
         try:
             self.joystick = pygame.joystick.Joystick(0)
             self.joystick.init()
-            print("Xbox controller connected!")
+            print("Kontroller tilkoblet!")
         except:
-            print("No controller detected!")
+            print("Ingen kontroller tilkoblet!")
 
     def get_inputs(self):
         pygame.event.pump()
@@ -51,15 +51,15 @@ class ArmController:
         self.arm_ik = ArmIK()
         self.arm_ik.board = self.board
         
-        # Initial position (centered)
+        # Initial posisjon (sentrert)
         self.current_pos = [0.0, 6.0, 18.0]  # X, Y, Z
         self.current_pitch = 0.0
         self.gripper_open = False
-        self.speed = 0.5  # cm per update
-        self.pitch_speed = 1.0  # degrees per update
+        self.speed = 0.5        # cm per oppdatering
+        self.pitch_speed = 1.0  # grader per oppdatering
 
     def update_position(self, dx, dy, dz):
-        # Update position with speed scaling
+        # Oppdaterer posisjon med hastighetsskalering
         self.current_pos[0] += dx * self.speed
         self.current_pos[1] += dy * self.speed
         self.current_pos[2] += dz * self.speed
@@ -84,8 +84,8 @@ class ArmController:
         result = self.arm_ik.setPitchRangeMoving(
             tuple(self.current_pos),
             self.current_pitch,
-            -90, 90,  # Pitch range
-            200  # Movement time in ms
+            -90, 90,    # Pitch range
+            200         # Bevegelsestid [ms]
         )
         return result is not None
 
@@ -93,12 +93,12 @@ def main():
     controller = XboxController()
     arm = ArmController()
     
-    print("Starting arm control...")
-    print("Right stick: X/Y movement")
-    print("Left stick Y: Z movement")
-    print("LB/RB: Adjust pitch")
-    print("A/B: Open/Close gripper")
-    print("Start: Exit program")
+    print("Starter ArmController...")
+    print("Høyre stick: X/Y bevegelse")
+    print("Venstre stick Y: Z bevegelse")
+    print("LB/RB: Endrer pitch")
+    print("A/B: Åpner/lukker griper")
+    print("Start: Avslutter program")
 
     try:
         while True:
@@ -109,39 +109,39 @@ def main():
 
             inputs = controller.get_inputs()
             
-            # Handle exit
+            # Avslutter programmet ved å trykke 'start'
             if inputs['start']:
                 break
             
-            # Handle movement
+            # Endring i posisjon
             dx = inputs['right_x']
-            dy = -inputs['right_y']  # Invert Y axis
-            dz = -inputs['left_y']   # Z axis from left stick
+            dy = -inputs['right_y']  # Invertert Y-axse
+            dz = -inputs['left_y']   # Z axis fra venstre stick
             
             arm.update_position(dx, dy, dz)
             
-            # Handle pitch adjustment
+            # Endring i pitch (bumpers)
             if inputs['lb']:
                 arm.update_pitch(-1)
             if inputs['rb']:
                 arm.update_pitch(1)
             
-            # Handle gripper
+            # Endring i griperen (A & B)
             if inputs['a_button'] and not arm.gripper_open:
                 arm.control_gripper(True)
             if inputs['b_button'] and arm.gripper_open:
                 arm.control_gripper(False)
             
-            # Send movement command
+            # Kaller bevegelsesfunksjon
             if arm.move_arm():
-                print(f"Position: {arm.current_pos} | Pitch: {arm.current_pitch:.1f}°")
+                print(f"Posisjon: {arm.current_pos} | Pitch: {arm.current_pitch:.1f}°")
             else:
-                print("Invalid position!")
+                print("Ugyldig posisjon!")
             
-            time.sleep(0.1)  # Control loop rate
+            time.sleep(0.1)  # main loop hastighetskontroll i sekunder
 
     except KeyboardInterrupt:
-        print("Exiting...")
+        print("Avslutter...")
     finally:
         pygame.quit()
 
