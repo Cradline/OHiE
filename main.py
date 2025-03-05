@@ -14,6 +14,7 @@ class XboxController:
         pygame.joystick.init()
         self.joystick = None
         self.initialize_controller()
+        self.deadzone = 0.2
 
     def initialize_controller(self):
         try:
@@ -34,18 +35,18 @@ class XboxController:
         pygame.event.pump()
         try:
             inputs = {
-                # Right analog stick (X/Y axes)
-                'right_x': self.joystick.get_axis(2),
-                'right_y': self.joystick.get_axis(3),
+                # Høyre analog stick (X/Y axes)
+                'right_x': self.apply_deadzone(self.joystick.get_axis(2)),
+                'right_y': self.apply_deadzone(self.joystick.get_axis(3)),
                 
-                # Left analog stick (for Z-axis)
-                'left_y': self.joystick.get_axis(1),
+                # Venstre analog stick (for Z-axis)
+                'left_y': self.apply_deadzone(self.joystick.get_axis(1)),
 
                 # Triggers
                 'RT': self.joystick.get_axis(4),
                 'LT': self.joystick.get_axis(5),
                 
-                # Buttons (A/B for gripper, lb/rb for pitch)
+                # Knapper (A/B for gripper, lb/rb for pitch)
                 'a_button': self.joystick.get_button(0),
                 'b_button': self.joystick.get_button(1),
                 'x_button': self.joystick.get_button(3),
@@ -53,7 +54,7 @@ class XboxController:
                 'lb': self.joystick.get_button(6),
                 'rb': self.joystick.get_button(7),
                 
-                # Start button for exit
+                # Start avslutter
                 'start': self.joystick.get_button(11),
                 'select': self.joystick.get_button(10)
             }
@@ -90,9 +91,9 @@ class ArmController:
         dz *= self.z_sensitivity
 
         # Begrenser arbeidsområde til gyldige posisjoner
-        self.current_pos[0] = max(-10, min(10, self.current_pos[0]))  # X limits
-        self.current_pos[1] = max(5, min(20, self.current_pos[1]))     # Y limits
-        self.current_pos[2] = max(10, min(25, self.current_pos[2]))     # Z limits
+        self.current_pos[0] = max(-10, min(10, self.current_pos[0] + dx))  # X limits
+        self.current_pos[1] = max(5, min(20, self.current_pos[1] + dy))     # Y limits
+        self.current_pos[2] = max(10, min(25, self.current_pos[2] + dz))     # Z limits
 
     # Fungerer ikke helt korrekt. Verdier oppdateres, men 
     # minimalt utslag i ledd C. 
