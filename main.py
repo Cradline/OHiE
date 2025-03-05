@@ -40,6 +40,10 @@ class XboxController:
                 
                 # Left analog stick (for Z-axis)
                 'left_y': self.joystick.get_axis(1),
+
+                # Triggers
+                'RT': self.joystick.get_axis(4),
+                'LT': self.joystick.get_axis(5),
                 
                 # Buttons (A/B for gripper, lb/rb for pitch)
                 'a_button': self.joystick.get_button(0),
@@ -50,7 +54,8 @@ class XboxController:
                 'rb': self.joystick.get_button(7),
                 
                 # Start button for exit
-                'start': self.joystick.get_button(11)
+                'start': self.joystick.get_button(11),
+                'select': self.joystick.get_button(10)
             }
         except AttributeError:
             self.initialize_controller()
