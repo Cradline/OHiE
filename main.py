@@ -17,31 +17,41 @@ class XboxController:
 
     def initialize_controller(self):
         try:
-            self.joystick = pygame.joystick.Joystick(0)
-            self.joystick.init()
-            print("Kontroller tilkoblet!")
-        except:
-            print("Ingen kontroller tilkoblet!")
+            if pygame.joystick.get_count() > 0:
+                self.joystick = pygame.joystick.Joystick(0)
+                self.joystick.init()
+                print("Kontroller tilkoblet!")
+            else:
+                print("Ingen kontroller tilkoblet!")
+        except Exception as e:
+            print(f"Kontrollerfeil: {e}")
+
+    def apply_deadzone(self, value):
+        return value if abs(value) > self.deadzone else 0.0
 
     def get_inputs(self):
+        inputs = {}
         pygame.event.pump()
-        inputs = {
-            # Right analog stick (X/Y axes)
-            'right_x': self.joystick.get_axis(3),
-            'right_y': self.joystick.get_axis(4),
-            
-            # Left analog stick (for Z-axis)
-            'left_y': self.joystick.get_axis(1),
-            
-            # Buttons (A/B for gripper, bumpers for pitch)
-            'a_button': self.joystick.get_button(0),
-            'b_button': self.joystick.get_button(1),
-            'lb': self.joystick.get_button(4),
-            'rb': self.joystick.get_button(5),
-            
-            # Start button for exit
-            'start': self.joystick.get_button(7)
-        }
+        try:
+            inputs = {
+                # Right analog stick (X/Y axes)
+                'right_x': self.joystick.get_axis(2),
+                'right_y': self.joystick.get_axis(3),
+                
+                # Left analog stick (for Z-axis)
+                'left_y': self.joystick.get_axis(1),
+                
+                # Buttons (A/B for gripper, bumpers for pitch)
+                'a_button': self.joystick.get_button(0),
+                'b_button': self.joystick.get_button(1),
+                'lb': self.joystick.get_button(6),
+                'rb': self.joystick.get_button(7),
+                
+                # Start button for exit
+                'start': self.joystick.get_button(11)
+            }
+        except AttributeError:
+            self.initialize_controller()
         return inputs
 
 class ArmController:
@@ -55,15 +65,23 @@ class ArmController:
         self.current_pos = [0.0, 6.0, 18.0]  # X, Y, Z
         self.current_pitch = 0.0
         self.gripper_open = False
-        self.speed = 0.5        # cm per oppdatering
-        self.pitch_speed = 1.0  # grader per oppdatering
+        '''self.speed = 0.5        # cm per oppdatering
+        self.pitch_speed = 1.0  # grader per oppdatering'''
+
+        # Sensitivitet
+        self.xy_sensitivity = 0.5  # lavere = tregere
+        self.z_sensitivity = 0.5
+        self.pitch_sensitivity = 0.5
 
     def update_position(self, dx, dy, dz):
         # Oppdaterer posisjon med hastighetsskalering
-        self.current_pos[0] += dx * self.speed
+        '''self.current_pos[0] += dx * self.speed
         self.current_pos[1] += dy * self.speed
-        self.current_pos[2] += dz * self.speed
-        
+        self.current_pos[2] += dz * self.speed'''
+        dx *= self.xy_sensitivity
+        dy *= self.xy_sensitivity
+        dz *= self.z_sensitivity
+
         # Begrenser arbeidsområde til gyldige posisjoner
         self.current_pos[0] = max(-10, min(10, self.current_pos[0]))  # X limits
         self.current_pos[1] = max(5, min(20, self.current_pos[1]))     # Y limits
