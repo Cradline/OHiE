@@ -41,9 +41,11 @@ class XboxController:
                 # Left analog stick (for Z-axis)
                 'left_y': self.joystick.get_axis(1),
                 
-                # Buttons (A/B for gripper, bumpers for pitch)
+                # Buttons (A/B for gripper, lb/rb for pitch)
                 'a_button': self.joystick.get_button(0),
                 'b_button': self.joystick.get_button(1),
+                'x_button': self.joystick.get_button(3),
+                'y_button': self.joystick.get_button(4),
                 'lb': self.joystick.get_button(6),
                 'rb': self.joystick.get_button(7),
                 
