@@ -88,9 +88,11 @@ class ArmController:
         self.current_pos[2] = max(10, min(25, self.current_pos[2]))     # Z limits
 
     def update_pitch(self, delta):
+        self.current_pitch = max(-90, min(90, 
+            self.current_pitch + delta * self.pitch_sensitivity))
         # Oppdaterer pitch til griper
-        self.current_pitch += delta * self.pitch_speed
-        self.current_pitch = max(-90, min(90, self.current_pitch))
+        '''self.current_pitch += delta * self.pitch_speed
+        self.current_pitch = max(-90, min(90, self.current_pitch))'''
 
     def control_gripper(self, open_gripper):
         # Åpner/lukker griperen
@@ -120,43 +122,52 @@ def main():
 
     try:
         while True:
-            if not controller.joystick:
+            inputs = controller.get_inputs()
+            '''if not controller.joystick:
                 controller.initialize_controller()
                 time.sleep(1)
-                continue
+                continue'''
 
-            inputs = controller.get_inputs()
+            
             
             # Avslutter programmet ved å trykke 'start'
-            if inputs['start']:
+            if inputs.get('start', 0):
                 break
             
             # Endring i posisjon
-            dx = inputs['right_x']
-            dy = -inputs['right_y']  # Invertert Y-axse
-            dz = -inputs['left_y']   # Z axis fra venstre stick
+            dx = inputs.get('right_x',0)
+            dy = -inputs.get('right_y',0)  # Invertert Y-akse? TBD
+            dz = -inputs.get('left_y',0)   # Z akse fra venstre stick
             
             arm.update_position(dx, dy, dz)
             
             # Endring i pitch (bumpers)
-            if inputs['lb']:
-                arm.update_pitch(-1)
-            if inputs['rb']:
-                arm.update_pitch(1)
+            pitch_delta = 0
+            if inputs.get('lb', 0):
+                pitch_delta -= 2
+            if inputs.get('rb', 0):
+                pitch_delta += 2
             
             # Endring i griperen (A & B)
-            if inputs['a_button'] and not arm.gripper_open:
+            if inputs.get('a_button', 0):
                 arm.control_gripper(True)
-            if inputs['b_button'] and arm.gripper_open:
+            if inputs.get('b_button', 0):
                 arm.control_gripper(False)
+
+            # Oppdaterer armens tilstand
+            if dx != 0 or dy != 0 or dz != 0:
+                arm.update_position(dx, dy, dz)
+            if pitch_delta != 0:
+                arm.update_pitch(pitch_delta)
             
             # Kaller bevegelsesfunksjon
             if arm.move_arm():
-                print(f"Posisjon: {arm.current_pos} | Pitch: {arm.current_pitch:.1f}°")
+                print(f"X:{arm.current_pos[0]:.1f} Y:{arm.current_pos[1]:.1f} "
+                      f"Z:{arm.current_pos[2]:.1f} Pitch:{arm.current_pitch:.1f}°")
             else:
                 print("Ugyldig posisjon!")
             
-            time.sleep(0.1)  # main loop hastighetskontroll i sekunder
+            time.sleep(0.05)  # main loop hastighetskontroll i sekunder
 
     except KeyboardInterrupt:
         print("Avslutter...")
