@@ -14,7 +14,7 @@ class XboxController:
         pygame.joystick.init()
         self.joystick = None
         self.initialize_controller()
-        self.deadzone = 0.2
+        self.deadzone = 0.8                 # Deadzone ratio
 
     def initialize_controller(self):
         try:
@@ -28,6 +28,7 @@ class XboxController:
             print(f"Kontrollerfeil: {e}")
 
     def apply_deadzone(self, value):
+        # Kun input verdier > deadzone registreres
         return value if abs(value) > self.deadzone else 0.0
 
     def get_inputs(self):
@@ -41,23 +42,39 @@ class XboxController:
                 
                 # Venstre analog stick (for Z-axis)
                 'left_y': self.apply_deadzone(self.joystick.get_axis(1)),
+                'left_x': self.apply_deadzone(self.joystick.get_axis(0)),   # Ubrukt
 
                 # Triggers
-                'RT': self.joystick.get_axis(4),
-                'LT': self.joystick.get_axis(5),
+                'RT': self.joystick.get_axis(4),            # Ubrukt
+                'LT': self.joystick.get_axis(5),            # Ubrukt
                 
-                # Knapper (A/B for gripper, lb/rb for pitch)
-                'a_button': self.joystick.get_button(0),
-                'b_button': self.joystick.get_button(1),
-                'x_button': self.joystick.get_button(3),
-                'y_button': self.joystick.get_button(4),
-                'lb': self.joystick.get_button(6),
-                'rb': self.joystick.get_button(7),
+                # Knapper 
+                'a_button': self.joystick.get_button(0),    # Lukker griper
+                'b_button': self.joystick.get_button(1),    # Åpner griper
+                'x_button': self.joystick.get_button(3),    # Ubrukt
+                'y_button': self.joystick.get_button(4),    # Ubrukt
+                'lb': self.joystick.get_button(6),          # Pitch ned
+                'rb': self.joystick.get_button(7),          # Pitch opp
+
+                # D-pad (Hat 0)
+                'dpad_up': False,                           # Ubrukt
+                'dpad_down': False,                         # Ubrukt
+                'dpad_left': False,                         # Ubrukt
+                'dpad_right': False,                        # Ubrukt
                 
-                # Start avslutter
-                'start': self.joystick.get_button(11),
-                'select': self.joystick.get_button(10)
+                # Start/Select
+                'start': self.joystick.get_button(11),      # Avslutter main()
+                'select': self.joystick.get_button(10)      # Ubrukt
             }
+            # Oppdaterer D-pad inputs (Hat 0)
+            if self.joystick.get_numhats() > 0:
+                hat_state = self.joystick.get_hat(0)
+                inputs.update({
+                    'dpad_up': hat_state[1] == 1,           # (0, 1)
+                    'dpad_down': hat_state[1] == -1,        # (0,-1)
+                    'dpad_left': hat_state[0] == -1,        # (-1,0)
+                    'dpad_right': hat_state[0] == 1         # (1, 0)
+                })
         except AttributeError:
             self.initialize_controller()
         return inputs
@@ -143,6 +160,19 @@ def main():
             if inputs.get('start', 0):
                 break
             
+            if inputs['dpad_up']:
+                print('dpad_up')
+                #arm.update_position(0, 0.5, 0)  # Move forward in Y
+            if inputs['dpad_down']:
+                print('dpad_down')
+                #arm.update_position(0, -0.5, 0)  # Move backward in Y
+            if inputs['dpad_left']:
+                print('dpad_left')
+                #arm.update_position(-0.5, 0, 0)  # Move left in X
+            if inputs['dpad_right']:
+                print('dpad_right')
+                #arm.update_position(0.5, 0, 0)  # Move right in X
+
             # Endring i posisjon
             dx = inputs.get('right_x',0)
             dy = -inputs.get('right_y',0)  # Invertert Y-akse? TBD
@@ -176,7 +206,7 @@ def main():
             else:
                 print("Ugyldig posisjon!")
             
-            time.sleep(0.05)  # main loop hastighetskontroll i sekunder
+            time.sleep(0.05)  # main loop delay i sekunder
 
     except KeyboardInterrupt:
         print("Avslutter...")
