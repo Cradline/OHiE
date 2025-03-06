@@ -5,6 +5,7 @@ import time
 import math
 from common.ros_robot_controller_sdk import Board
 from kinematics.arm_move_ik import ArmIK
+# from controller_class import *
 # from kinematics.IK_servo import ArmIK
 
 # Controller klasse 
