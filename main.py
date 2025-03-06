@@ -90,8 +90,6 @@ class ArmController:
         self.current_pos = [0.0, 6.0, 18.0]  # X, Y, Z
         self.current_pitch = 0.0
         self.gripper_open = False
-        '''self.speed = 0.5        # cm per oppdatering
-        self.pitch_speed = 1.0  # grader per oppdatering'''
 
         # Sensitivitet
         self.xy_sensitivity = 0.5  # lavere = tregere
@@ -100,9 +98,7 @@ class ArmController:
 
     def update_position(self, dx, dy, dz):
         # Oppdaterer posisjon med hastighetsskalering
-        '''self.current_pos[0] += dx * self.speed
-        self.current_pos[1] += dy * self.speed
-        self.current_pos[2] += dz * self.speed'''
+
         dx *= self.xy_sensitivity
         dy *= self.xy_sensitivity
         dz *= self.z_sensitivity
@@ -115,11 +111,9 @@ class ArmController:
     # Fungerer ikke helt korrekt. Verdier oppdateres, men 
     # minimalt utslag i ledd C. 
     def update_pitch(self, delta):
+        # Oppdaterer pitchvinkel til griper
         self.current_pitch = max(-90, min(90, 
             self.current_pitch + delta * self.pitch_sensitivity))
-        # Oppdaterer pitch til griper
-        '''self.current_pitch += delta * self.pitch_speed
-        self.current_pitch = max(-90, min(90, self.current_pitch))'''
 
     def control_gripper(self, open_gripper):
         # Åpner/lukker griperen
@@ -150,11 +144,6 @@ def main():
     try:
         while True:
             inputs = controller.get_inputs()
-            '''if not controller.joystick:
-                controller.initialize_controller()
-                time.sleep(1)
-                continue'''
-
                 
             # Avslutter programmet ved å trykke 'start'
             if inputs.get('start', 0):
