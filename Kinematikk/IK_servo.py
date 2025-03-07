@@ -65,6 +65,7 @@ class ArmIK:
         servo5 = int(round((self.servo5Range[1] + self.servo5Range[0])/2 + (90.0 - theta5) * self.servo5Param)) 
         if servo5 > ((self.servo5Range[1] + self.servo5Range[0])/2 + 90*self.servo5Param) or servo5 < ((self.servo5Range[1] + self.servo5Range[0])/2 - 90*self.servo5Param):
             # Sjekker om vinkelutslag er innenfor gyldig område
+            # -> Vinkel mellom [-pi/2,pi/2] ? 
             logger.info('servo5(%s)Utenfor gyldig område(%s, %s)', servo5, self.servo5Range[0], self.servo5Range[1])
             return False
         
