@@ -81,4 +81,71 @@ class ArmIK:
             logger.info('servo6(%s)Utenfor gyldig område(%s, %s)', servo6, self.servo6Range[0], self.servo6Range[1])
             return False
         return {"servo3": servo3, "servo4": servo4, "servo5": servo5, "servo6": servo6}
+
+    def servosMove(self, servos, movetime=None):
+        # Styrer servoene til de beregnede posisjonene
+        if movetime is None:
+            max_d = 0
+            for i in  range(0, 4):
+                #d = abs(board.pwm_servo_read_position(i + 3) - servos[i])
+                d = abs(deviation_data['{}'.format(i+3)])
+                print(d)
+                if d > max_d:
+                    max_d = d
+            movetime = int(max_d*1)
+        self.board.pwm_servo_set_position(float(movetime)/1000.0,[[3,servos[0]+deviation_data['3']]])
+        self.board.pwm_servo_set_position(float(movetime)/1000.0,[[4,servos[1]+deviation_data['4']]])
+        self.board.pwm_servo_set_position(float(movetime)/1000.0,[[5,servos[2]+deviation_data['5']]])
+        self.board.pwm_servo_set_position(float(movetime)/1000.0,[[6,servos[3]+deviation_data['6']]])
+
+        return movetime
+
+    def setPitchRange(self, coordinate_data, alpha1, alpha2, da = 1):
+        # Flytter robotarmen til en posisjon med en gitt pitch-vinkel
+        x, y, z = coordinate_data
+        if alpha1 >= alpha2:
+            da = -da
+        for alpha in np.arange(alpha1, alpha2, da):#遍历求解
+            result = ik.getRotationAngle((x, y, z), alpha)
+            if result:
+                theta3, theta4, theta5, theta6 = result['theta3'], result['theta4'], result['theta5'], result['theta6']               
+                servos = self.transformAngelAdaptArm(theta3, theta4, theta5, theta6)
+                if servos != False:
+                    return servos, alpha
+
+        return False
+
+
+    def setPitchRangeMoving(self, coordinate_data, alpha, alpha1, alpha2, movetime = None):
+
+# Gitt koordinater coordinate_data og pitch-vinkel alpha, samt pitch-intervallet alpha1 og alpha2,
+# automatisk finn den løsningen som er nærmest den gitte pitch-vinkelen og flytt til målposisjonen.
+# Hvis det ikke finnes noen løsning, returner False. Ellers returner servo-vinkler, pitch-vinkel og kjøretid.
+# Koordinatene er i centimeter og sendes som en tuppel, for eksempel (0, 5, 10).
+# alpha er den gitte pitch-vinkelen.
+# alpha1 og alpha2 er området for pitch-vinkelen.
+# movetime er tiden det tar for servoen å bevege seg, i millisekunder. Hvis tiden ikke er oppgitt, beregnes den automatisk.
         
+        x, y, z = coordinate_data
+        result1 = self.setPitchRange((x, y, z), alpha, alpha1)
+        result2 = self.setPitchRange((x, y, z), alpha, alpha2)
+        if result1 != False:
+            data = result1
+            if result2 != False:
+                if abs(result2[1] - alpha) < abs(result1[1] - alpha):
+                    data = result2
+        else:
+            if result2 != False:
+                data = result2
+            else:
+                return False
+        servos, alpha = data[0], data[1]
+        movetime = self.servosMove((servos["servo3"], servos["servo4"], servos["servo5"], servos["servo6"]), movetime)
+        return servos, alpha, movetime
+ 
+if __name__ == "__main__":
+    from common.ros_robot_controller_sdk import Board
+    board = Board()
+    AK = ArmIK()
+    AK.board = board
+    #print(AK.setPitchRangeMoving((0, 6, 18), 0,-90, 90, 1500))
