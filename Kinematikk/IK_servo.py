@@ -105,7 +105,7 @@ class ArmIK:
         x, y, z = coordinate_data
         if alpha1 >= alpha2:
             da = -da
-        for alpha in np.arange(alpha1, alpha2, da):#遍历求解
+        for alpha in np.arange(alpha1, alpha2, da):#
             result = ik.getRotationAngle((x, y, z), alpha)
             if result:
                 theta3, theta4, theta5, theta6 = result['theta3'], result['theta4'], result['theta5'], result['theta6']               
