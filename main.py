@@ -131,7 +131,11 @@ class ArmController:
         )
         return result is not None
 
-#class koraBil: fremover, bakover, roter høyre, roter venstre
+class koraBil: #fremover, bakover, roter høyre, roter venstre
+    def __init__(self):
+        self.board = Board()
+        self.board.enable_reception()
+
 
 def main():
     controller = XboxController()
