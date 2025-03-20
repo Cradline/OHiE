@@ -4,6 +4,7 @@ import pygame
 import time
 import math
 from common.ros_robot_controller_sdk import Board
+from common.mecanum import MecanumChassis
 from kinematics.arm_move_ik import ArmIK
 # from controller_class import *
 # from kinematics.IK_servo import ArmIK
@@ -133,8 +134,7 @@ class ArmController:
 
 class koraBil: #fremover, bakover, roter høyre, roter venstre
     def __init__(self):
-        self.board = Board()
-        self.board.enable_reception()
+        fart = 0
 
 
 def main():
