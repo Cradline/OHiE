@@ -92,11 +92,13 @@ class IK:
         # Theta_3
         theta3 = Alpha - theta5 + theta4
 
-
+        #print("theta3", theta3, "theta4", theta4, "theta5", theta5, "theta6", theta6)
         return {"theta3":theta3, "theta4":theta4, "theta5":theta5, "theta6":theta6} # Returns the angles if there is a solution
             
 if __name__ == '__main__':
     ik = IK('arm')
     #ik.setLinkLength(L1=ik.l1 + 1.30, L4=ik.l4)
+    
+    #ik.getRotationAngle((0,6,18), 0)
     print('Link length：', ik.getLinkLength())
     #print(ik.getRotationAngle((0, ik.l4, ik.l1 + ik.l2 + ik.l3), 0))
