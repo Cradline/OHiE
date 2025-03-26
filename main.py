@@ -270,8 +270,8 @@ def main():
         print("Avslutter...")
     finally:
         rover.stop()
-        video_stream.stop()  # Release camera
-        cv2.destroyAllWindows()  # Close OpenCV windows
+        video_stream.stop()  # Frigjør camera
+        cv2.destroyAllWindows()  # Lukker alle OpenCV vinduer
         pygame.quit()
 
 if __name__ == "__main__":
