@@ -132,9 +132,31 @@ class ArmController:
         )
         return result is not None
 
-class koraBil: #fremover, bakover, roter høyre, roter venstre
+class koraBil:
     def __init__(self):
-        fart = 0
+        self.chassis = MecanumChassis()
+        self.speed = 100  # [mm/s] (Juster etter behov)
+        self.rotation_speed = 50  # [mm/s] (Juster etter behov)
+
+    def forward(self):
+        """Konstant fart framover"""
+        self.chassis.set_velocity(self.speed, 90, 0)  # 90° = fremover i Y-akse (bil)
+
+    def backward(self):
+        """Konstant fart bakover"""
+        self.chassis.set_velocity(self.speed, 270, 0)  # 270° = bakover i Y-akse (bil)
+
+    def rotate_left(self):
+        """Roterer mot klokken"""
+        self.chassis.set_velocity(0, 0, self.rotation_speed)
+
+    def rotate_right(self):
+        """Roterer med klokken"""
+        self.chassis.set_velocity(0, 0, -self.rotation_speed)
+
+    def stop(self):
+        """Stopper alle motorer"""
+        self.chassis.reset_motors()
 
 
 def main():
