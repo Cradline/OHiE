@@ -162,12 +162,14 @@ class koraBil:
 def main():
     controller = XboxController()
     arm = ArmController()
+    rover = koraBil()
     
     print("Starter ArmController...")
     print("Høyre stick: X/Y bevegelse")
     print("Venstre stick Y: Z bevegelse")
     print("LB/RB: Endrer pitch")
     print("A/B: Åpner/lukker griper")
+    print("D-pad: Rover kontroll")
     print("Start: Avslutter program")
 
     try:
@@ -178,18 +180,18 @@ def main():
             if inputs.get('start', 0):
                 break
             
+            # Rover control (D-pad)
             if inputs['dpad_up']:
-                print('dpad_up')
-                #arm.update_position(0, 0.5, 0)  # Move forward in Y
-            if inputs['dpad_down']:
-                print('dpad_down')
-                #arm.update_position(0, -0.5, 0)  # Move backward in Y
-            if inputs['dpad_left']:
-                print('dpad_left')
-                #arm.update_position(-0.5, 0, 0)  # Move left in X
-            if inputs['dpad_right']:
-                print('dpad_right')
-                #arm.update_position(0.5, 0, 0)  # Move right in X
+                rover.forward()
+            elif inputs['dpad_down']:
+                rover.backward()
+            elif inputs['dpad_left']:
+                rover.rotate_left()
+            elif inputs['dpad_right']:
+                rover.rotate_right()
+            else:
+                rover.stop()  # Stopper dersom ingen input
+
 
             # Endring i posisjon
             dx = inputs.get('right_x',0)
@@ -229,6 +231,7 @@ def main():
     except KeyboardInterrupt:
         print("Avslutter...")
     finally:
+        rover.stop()
         pygame.quit()
 
 if __name__ == "__main__":
