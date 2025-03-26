@@ -85,7 +85,7 @@ class XboxController:
 
 class VideoStream:
     def __init__(self, resolution=(640, 480)):
-        self.stream = cv2.VideoCapture(0)
+        self.stream = cv2.VideoCapture(-1)
         self.stream.set(cv2.CAP_PROP_FRAME_WIDTH, resolution[0])
         self.stream.set(cv2.CAP_PROP_FRAME_HEIGHT, resolution[1])
         self.stopped = False
