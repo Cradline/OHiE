@@ -133,6 +133,7 @@ class ArmController:
         dy *= self.xy_sensitivity
         dz *= self.z_sensitivity
 
+        # DENNE MÅ OPPDATERES
         # Begrenser arbeidsområde til gyldige posisjoner
         self.current_pos[0] = max(-10, min(10, self.current_pos[0] + dx))  # X limits
         self.current_pos[1] = max(5, min(20, self.current_pos[1] + dy))     # Y limits
