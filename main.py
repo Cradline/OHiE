@@ -61,10 +61,10 @@ class XboxController:
                 'rb': self.joystick.get_button(7),          # Pitch opp
 
                 # D-pad (Hat 0)
-                'dpad_up': False,                           # Ubrukt
-                'dpad_down': False,                         # Ubrukt
-                'dpad_left': False,                         # Ubrukt
-                'dpad_right': False,                        # Ubrukt
+                'dpad_up': False,                           # Kjør frem
+                'dpad_down': False,                         # Rygg
+                'dpad_left': False,                         # Roter venstre
+                'dpad_right': False,                        # Roter høyre
                 
                 # Start/Select
                 'start': self.joystick.get_button(11),      # Avslutter main()
