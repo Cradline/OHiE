@@ -3,6 +3,8 @@
 import pygame
 import time
 import math
+import cv2  # openCV
+from threading import Thread  # Kjører video i separat tråd
 from common.ros_robot_controller_sdk import Board
 from common.mecanum import MecanumChassis
 from kinematics.arm_move_ik import ArmIK
@@ -80,6 +82,32 @@ class XboxController:
         except AttributeError:
             self.initialize_controller()
         return inputs
+
+class VideoStream:
+    def __init__(self, resolution=(640, 480)):
+        self.stream = cv2.VideoCapture(0)
+        self.stream.set(cv2.CAP_PROP_FRAME_WIDTH, resolution[0])
+        self.stream.set(cv2.CAP_PROP_FRAME_HEIGHT, resolution[1])
+        self.stopped = False
+        self.frame = None
+
+    def start(self):
+        Thread(target=self.update, args=()).start()
+        return self
+
+    def update(self):
+        while not self.stopped:
+            ret, frame = self.stream.read()
+            if not ret:
+                break
+            self.frame = frame
+
+    def read(self):
+        return self.frame
+
+    def stop(self):
+        self.stopped = True
+        self.stream.release()
 
 class ArmController:
     def __init__(self):
@@ -163,6 +191,8 @@ def main():
     controller = XboxController()
     arm = ArmController()
     rover = koraBil()
+    video_stream = VideoStream().start()
+    time.sleep(1.0)
     
     print("Starter ArmController...")
     print("Høyre stick: X/Y bevegelse")
@@ -174,6 +204,13 @@ def main():
 
     try:
         while True:
+
+            # Viser video feed
+            frame = video_stream.read()
+            if frame is not None:
+                cv2.imshow("Rover Camera", frame)
+                cv2.waitKey(1)      # Kreves for å oppdatere vinduet
+
             inputs = controller.get_inputs()
                 
             # Avslutter programmet ved å trykke 'start'
@@ -232,6 +269,8 @@ def main():
         print("Avslutter...")
     finally:
         rover.stop()
+        video_stream.stop()  # Release camera
+        cv2.destroyAllWindows()  # Close OpenCV windows
         pygame.quit()
 
 if __name__ == "__main__":
