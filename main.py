@@ -236,7 +236,7 @@ def main():
             dy = -inputs.get('right_y',0)  # Invertert Y-akse? TBD
             dz = -inputs.get('left_y',0)   # Z akse fra venstre stick
             
-            arm.update_position(dx, dy, dz)
+            #arm.update_position(dx, dy, dz)
             
             # Endring i pitch (bumpers)
             pitch_delta = 0
